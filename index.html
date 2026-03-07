@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wave Rework</title>
+  <meta name="description" content="Wave Rework is a clean, fast, free desktop release hub for Windows users.">
+  <meta name="theme-color" content="#111111">
+  <meta property="og:title" content="Wave Rework">
+  <meta property="og:description" content="Clean. Fast. Free. Desktop-only release hub for Wave Rework.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="GradientWave.png">
+  <meta property="og:image:alt" content="Wave Rework logo">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Wave Rework">
+  <meta name="twitter:description" content="Clean. Fast. Free. Desktop-only release hub for Wave Rework.">
+  <meta name="twitter:image" content="GradientWave.png">
+  <link rel="icon" type="image/png" href="GradientWave.png">
+  <link rel="shortcut icon" href="GradientWave.png">
+  <link rel="apple-touch-icon" href="GradientWave.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@700;800&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      background-color: #111111;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+
+    .page-shell {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 1rem;
+      animation: pageFade 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .hero-panel {
+      animation: heroRise 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .logo-container {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 6rem;
+      overflow: visible;
+    }
+
+    .logo-track {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      overflow: visible;
+      animation: logoIntro 1.05s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
+    }
+
+    .logo-mark {
+      flex-shrink: 0;
+      transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+    }
+
+    .logo-text {
+      display: inline-block;
+      width: 0;
+      overflow: visible;
+      transform: translateX(12px);
+      font-family: 'Manrope', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: #0EA5E9;
+      opacity: 0;
+      white-space: nowrap;
+      letter-spacing: 0.08em;
+      text-shadow: 0 0 15px rgba(14, 165, 233, 0.7), 0 0 30px rgba(14, 165, 233, 0.4);
+      filter: blur(6px);
+      transition:
+        opacity 0.55s ease,
+        transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.7s ease,
+        width 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+        margin-left 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform, opacity, filter, width;
+    }
+
+    .logo-container:hover .logo-mark {
+      transform: translateX(-10px);
+    }
+
+    .logo-container:hover .logo-text {
+      width: 13.8rem;
+      margin-left: 0.9rem;
+      opacity: 1;
+      transform: translateX(0);
+      filter: blur(0);
+    }
+
+    .neon-button {
+      position: relative;
+      isolation: isolate;
+      overflow: visible;
+      box-shadow:
+        0 0 0 rgba(14, 165, 233, 0),
+        0 0 0 rgba(14, 165, 233, 0);
+      transition:
+        box-shadow 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+        background-color 0.45s ease,
+        border-color 0.45s ease;
+    }
+
+    .muted-button {
+      cursor: not-allowed;
+      opacity: 0.72;
+      border-color: rgba(63, 63, 70, 0.95);
+      color: #a1a1aa;
+    }
+
+    .muted-button::after {
+      display: none;
+    }
+
+    .muted-button:hover {
+      box-shadow: none;
+      background-color: #18181b;
+      border-color: rgba(63, 63, 70, 0.95);
+    }
+
+    .muted-label {
+      margin-left: 0.45rem;
+      padding: 0.18rem 0.42rem;
+      border: 1px solid rgba(63, 63, 70, 0.9);
+      border-radius: 999px;
+      font-size: 0.63rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #71717a;
+    }
+
+    .neon-button::after {
+      content: "";
+      position: absolute;
+      inset: -6px;
+      border-radius: inherit;
+      background: radial-gradient(circle at center, rgba(14, 165, 233, 0.24), transparent 72%);
+      opacity: 0;
+      filter: blur(18px);
+      transition: opacity 0.8s ease, filter 0.8s ease;
+      z-index: -1;
+    }
+
+    .neon-button:hover {
+      box-shadow:
+        0 0 16px rgba(14, 165, 233, 0.2),
+        0 0 34px rgba(14, 165, 233, 0.12);
+    }
+
+    .neon-button:hover::after {
+      opacity: 1;
+      filter: blur(22px);
+    }
+
+    .button-stack {
+      animation: contentFade 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.16s both;
+    }
+
+    .support-note {
+      animation: contentFade 1.15s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
+    }
+
+    .warning-copy {
+      animation: contentFade 1.05s cubic-bezier(0.22, 1, 0.36, 1) 0.14s both;
+    }
+
+    .site-footer {
+      position: fixed;
+      left: 50%;
+      bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.45rem;
+      width: min(92vw, 32rem);
+      transform: translateX(-50%);
+      text-align: center;
+    }
+
+    .footer-warning {
+      width: 100%;
+      font-size: 0.76rem;
+      font-weight: 500;
+      line-height: 1.5;
+      color: #a1a1aa;
+      animation: contentFade 1.05s cubic-bezier(0.22, 1, 0.36, 1) 0.14s both;
+    }
+
+    .footer-copy {
+      font-size: 13px;
+      color: #a1a1aa;
+    }
+
+    .mobile-blocker {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+      background:
+        radial-gradient(circle at top, rgba(14, 165, 233, 0.16), transparent 38%),
+        rgba(10, 10, 10, 0.92);
+      backdrop-filter: blur(18px);
+      z-index: 50;
+    }
+
+    .mobile-card {
+      width: min(100%, 24rem);
+      border: 1px solid rgba(63, 63, 70, 0.9);
+      border-radius: 1.25rem;
+      padding: 1.4rem;
+      background: rgba(17, 17, 17, 0.94);
+      box-shadow:
+        0 0 30px rgba(14, 165, 233, 0.12),
+        0 12px 40px rgba(0, 0, 0, 0.45);
+      text-align: center;
+    }
+
+    .mobile-card h2 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #f4f4f5;
+    }
+
+    .mobile-card p {
+      margin-top: 0.75rem;
+      font-size: 0.92rem;
+      line-height: 1.6;
+      color: #d4d4d8;
+    }
+
+    .mobile-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.9rem;
+      padding: 0.45rem 0.8rem;
+      border-radius: 999px;
+      background: rgba(14, 165, 233, 0.12);
+      color: #67e8f9;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.6rem;
+      width: 100%;
+      max-width: 17rem;
+      margin: 0 auto 1rem;
+    }
+
+    .info-card {
+      padding: 0.65rem 0.8rem;
+      border: 1px solid rgba(39, 39, 42, 0.95);
+      border-radius: 0.8rem;
+      background: rgba(24, 24, 27, 0.7);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+
+    .info-label {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #71717a;
+    }
+
+    .info-value {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #f4f4f5;
+    }
+
+    @keyframes pageFade {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes heroRise {
+      from {
+        opacity: 0;
+        transform: translateY(24px) scale(0.985);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes logoIntro {
+      from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.96);
+        filter: blur(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes contentFade {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-shell {
+        padding: 1.25rem;
+      }
+
+      .logo-container {
+        min-height: 5.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .logo-mark {
+        height: 4.5rem;
+      }
+
+      .logo-text {
+        font-size: 1.35rem;
+        letter-spacing: 0.06em;
+      }
+
+      .logo-container:hover .logo-text {
+        width: 10.8rem;
+        margin-left: 0.7rem;
+      }
+
+      .logo-container:hover .logo-mark {
+        transform: translateX(-8px);
+      }
+
+      .button-stack {
+        width: 100%;
+        flex-direction: column;
+      }
+
+      .button-stack .neon-button {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .mobile-blocker {
+        display: flex;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .site-footer {
+        bottom: 0.9rem;
+        width: min(90vw, 22rem);
+      }
+
+      .footer-warning {
+        width: 100%;
+        font-size: 0.72rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="text-white">
+  <div class="mobile-blocker">
+    <div class="mobile-card">
+      <div class="mobile-pill">Desktop Only</div>
+      <h2>Wave Rework is not supported on mobile devices</h2>
+      <p>
+        This application is designed for desktop Windows systems. Open this page on a PC to download and use the app.
+      </p>
+    </div>
+  </div>
+
+  <main class="page-shell">
+    <div class="hero-panel flex w-full max-w-lg flex-col items-center justify-center text-center">
+      <div class="logo-container mb-10">
+        <div class="logo-track">
+          <img src="GradientWave.png" alt="Wave Rework" class="logo-mark h-24">
+          <span class="logo-text">Wave Rework</span>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <span class="info-label">Status</span>
+          <span class="info-value text-[#00cc0e]">Working</span>
+        </div>
+        <div class="info-card">
+          <span class="info-label">Version</span>
+          <span class="info-value">v1.0.0</span>
+        </div>
+      </div>
+
+      <div class="button-stack mb-6 flex flex-wrap items-center justify-center gap-3">
+        <button
+          class="neon-button flex items-center gap-2 rounded-md bg-[#0EA5E9] px-5 py-2.5 font-semibold text-black transition-colors hover:bg-[#0284c7]">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Download
+        </button>
+
+        <button
+          class="neon-button muted-button flex items-center gap-2 rounded-md border border-[#27272a] bg-[#18181b] px-5 py-2.5 text-gray-200 transition-colors"
+          disabled aria-disabled="true" title="How to use is not available yet">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          How to use
+          <span class="muted-label">Soon</span>
+        </button>
+
+        <button
+          class="neon-button muted-button flex items-center gap-2 rounded-md border border-[#27272a] bg-[#18181b] px-5 py-2.5 text-gray-200 transition-colors"
+          disabled aria-disabled="true" title="Discord is not available yet">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z" />
+          </svg>
+          Discord
+          <span class="muted-label">Soon</span>
+        </button>
+      </div>
+
+      <p class="support-note text-center text-[13px] text-[#a1a1aa]">
+        Requires .NET 9.0 Desktop Runtime<br>
+        <a href="https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-9.0.13-windows-x64-installer"
+          class="underline decoration-[#71717a] underline-offset-[3px] transition-colors hover:text-white">Download
+          here</a>
+      </p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p class="footer-warning">
+      If you paid for this software, you've been scammed. This software is free.
+    </p>
+    <div class="footer-copy">&copy; 2026 Wave Rework</div>
+  </footer>
+</body>
+
+</html>
