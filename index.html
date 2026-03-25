@@ -4,17 +4,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wave Rework</title>
-  <meta name="description" content="Wave Rework is a clean, fast, free desktop release hub for Windows users.">
+  <title>ReWave</title>
+  <meta name="description" content="ReWave is a clean, fast, free desktop release hub for Windows users.">
   <meta name="theme-color" content="#111111">
-  <meta property="og:title" content="Wave Rework">
-  <meta property="og:description" content="Clean. Fast. Free. Desktop-only release hub for Wave Rework.">
+  <meta property="og:title" content="ReWave">
+  <meta property="og:description" content="Clean. Fast. Free. Desktop-only release hub for ReWave.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="GradientWave.png">
-  <meta property="og:image:alt" content="Wave Rework logo">
+  <meta property="og:image:alt" content="ReWave logo">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Wave Rework">
-  <meta name="twitter:description" content="Clean. Fast. Free. Desktop-only release hub for Wave Rework.">
+  <meta name="twitter:title" content="ReWave">
+  <meta name="twitter:description" content="Clean. Fast. Free. Desktop-only release hub for ReWave.">
   <meta name="twitter:image" content="GradientWave.png">
   <link rel="icon" type="image/png" href="GradientWave.png">
   <link rel="shortcut icon" href="GradientWave.png">
@@ -73,7 +73,7 @@
       display: inline-block;
       width: 0;
       overflow: visible;
-      transform: translateX(12px);
+      transform: translateX(5px);
       font-family: 'Manrope', sans-serif;
       font-size: 28px;
       font-weight: 700;
@@ -93,12 +93,12 @@
     }
 
     .logo-container:hover .logo-mark {
-      transform: translateX(-10px);
+      transform: translateX(-2px);
     }
 
     .logo-container:hover .logo-text {
-      width: 13.8rem;
-      margin-left: 0.9rem;
+      width: 12.5rem;
+      margin-left: 0.25rem;
       opacity: 1;
       transform: translateX(0);
       filter: blur(0);
@@ -364,12 +364,12 @@
       }
 
       .logo-container:hover .logo-text {
-        width: 10.8rem;
-        margin-left: 0.7rem;
+        width: 9.9rem;
+        margin-left: 0.2rem;
       }
 
       .logo-container:hover .logo-mark {
-        transform: translateX(-8px);
+        transform: translateX(-1px);
       }
 
       .button-stack {
@@ -407,7 +407,7 @@
   <div class="mobile-blocker">
     <div class="mobile-card">
       <div class="mobile-pill">Desktop Only</div>
-      <h2>Wave Rework is not supported on mobile devices</h2>
+      <h2>ReWave is not supported on mobile devices</h2>
       <p>
         This application is designed for desktop Windows systems. Open this page on a PC to download and use the app.
       </p>
@@ -418,8 +418,8 @@
     <div class="hero-panel flex w-full max-w-lg flex-col items-center justify-center text-center">
       <div class="logo-container mb-10">
         <div class="logo-track">
-          <img src="GradientWave.png" alt="Wave Rework" class="logo-mark h-24">
-          <span class="logo-text">Wave Rework</span>
+          <img src="GradientWave.png" alt="ReWave" class="logo-mark h-24">
+          <span class="logo-text">ReWave</span>
         </div>
       </div>
 
@@ -430,12 +430,12 @@
         </div>
         <div class="info-card">
           <span class="info-label">Version</span>
-          <span class="info-value">v1.0.0</span>
+          <span class="info-value" id="release-version">Loading...</span>
         </div>
       </div>
 
       <div class="button-stack mb-6 flex flex-wrap items-center justify-center gap-3">
-        <button
+        <a id="download-link" href="https://github.com/engix3/rewave/releases/latest/download/ReWave-win-x64.zip"
           class="neon-button flex items-center gap-2 rounded-md bg-[#0EA5E9] px-5 py-2.5 font-semibold text-black transition-colors hover:bg-[#0284c7]">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -444,7 +444,7 @@
             <line x1="12" y1="15" x2="12" y2="3" />
           </svg>
           Download
-        </button>
+        </a>
 
         <button
           class="neon-button muted-button flex items-center gap-2 rounded-md border border-[#27272a] bg-[#18181b] px-5 py-2.5 text-gray-200 transition-colors"
@@ -484,8 +484,48 @@
     <p class="footer-warning">
       If you paid for this software, you've been scammed. This software is free.
     </p>
-    <div class="footer-copy">&copy; 2026 Wave Rework</div>
+    <div class="footer-copy">&copy; 2026 ReWave</div>
   </footer>
+
+  <script>
+    const fallbackVersion = "failed to load";
+    const fallbackDownloadUrl = "https://github.com/engix3/rewave/releases/latest/download/ReWave-win-x64.zip";
+    const latestReleaseApiUrl = "https://api.github.com/repos/engix3/rewave/releases/latest";
+    const expectedAssetName = "ReWave-win-x64.zip";
+
+    const versionElement = document.getElementById("release-version");
+    const downloadLink = document.getElementById("download-link");
+
+    async function loadLatestRelease() {
+      versionElement.textContent = fallbackVersion;
+      downloadLink.href = fallbackDownloadUrl;
+
+      try {
+        const response = await fetch(latestReleaseApiUrl, {
+          headers: {
+            Accept: "application/vnd.github+json"
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`GitHub API responded with ${response.status}`);
+        }
+
+        const release = await response.json();
+        const latestVersion = release.tag_name || release.name || fallbackVersion;
+        const matchingAsset = Array.isArray(release.assets)
+          ? release.assets.find((asset) => asset.name === expectedAssetName)
+          : null;
+
+        versionElement.textContent = latestVersion;
+        downloadLink.href = matchingAsset?.browser_download_url || fallbackDownloadUrl;
+      } catch (error) {
+        console.error("Failed to load latest release info:", error);
+      }
+    }
+
+    loadLatestRelease();
+  </script>
 </body>
 
 </html>
